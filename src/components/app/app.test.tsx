@@ -5,7 +5,7 @@ import { configureMockStore } from '@jedmao/redux-mock-store';
 import { Provider } from 'react-redux';
 import { AppRoute } from '../../const';
 import App from './app';
-import { firebaseApp } from '../../services/firebase'; 
+import { firebaseApp } from '../../services/firebase';
 import { State } from '../../types/state';
 import { Action } from 'redux';
 import thunk, { ThunkDispatch } from 'redux-thunk';
@@ -19,7 +19,7 @@ const mockStore = configureMockStore<
 >(middlewares);
 
 const store = mockStore({
-  isLoading: false,
+  isTaskListLoading: false,
   taskList: [],
 });
 

@@ -7,7 +7,6 @@ import { firebaseApp } from '../../services/firebase';
 import { State } from '../../types/state';
 import { Action } from 'redux';
 import thunk, { ThunkDispatch } from 'redux-thunk';
-import { emptyTask } from '../../const';
 
 const middlewares = [thunk.withExtraArgument(firebaseApp)];
 
@@ -18,18 +17,16 @@ const mockStore = configureMockStore<
 >(middlewares);
 
 const store = mockStore({
-  isLoading: false,
+  isTaskListLoading: false,
   taskList: [],
 });
-
-const mockTask = emptyTask;
 
 describe('Component: FormModal', () => {
   it('should render correctly', () => {
     render(
       <Provider store={store}>
         <BrowserRouter>
-          <FormModal isEdit={false} task={mockTask} />
+          <FormModal isEdit={false} />
         </BrowserRouter>
       </Provider>
     );

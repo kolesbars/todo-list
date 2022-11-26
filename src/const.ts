@@ -1,7 +1,9 @@
+import dayjs from 'dayjs';
+
 export enum AppRoute {
   Main = '/',
   Task = '/task',
-  NotFoundScreen = '/notfound'
+  NotFoundScreen = '/notfound',
 }
 
 export enum TaskTextLength {
@@ -12,7 +14,7 @@ export enum TaskTextLength {
 export const emptyTask = {
   title: '',
   text: '',
-  date: 0,
-  deadline: 0,
+  createdDate: 0,
+  deadline: dayjs().valueOf(),
   isCompleted: false,
 };

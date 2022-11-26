@@ -19,10 +19,9 @@ import 'dayjs/locale/es';
 
 type FormModalProps = {
   isEdit: boolean;
-  task: TaskType;
 };
 
-function FormModal({ isEdit, task }: FormModalProps) {
+function FormModal({ isEdit }: FormModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
@@ -34,32 +33,20 @@ function FormModal({ isEdit, task }: FormModalProps) {
   const { id } = useParams<{ id: string }>();
   /**
    * Записывает значения полей формы(Заголовок, описание, срок) в локальный state при изменении
-   * @param e
+   * @param event событие изменения данных полей формы
    */
   const handleFieldChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    switch (e.currentTarget.name) {
-      case 'title':
-        setData({ ...data, title: e.target.value });
-        break;
-      case 'description':
-        setData({ ...data, text: e.target.value });
-        break;
-      case 'deadline':
-        setData({ ...data, deadline: dayjs(e.target.value).valueOf() });
-        break;
-      default:
-        break;
-    }
+    setData({ ...data, [event.currentTarget.name]: event.target.value });
   };
   /**
    * Записывает значение поля file в локальный state при изменении
-   * @param e
+   * @param event событие изменения поля file
    */
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setFile(event.target.files[0]);
     }
   };
   /**
@@ -73,11 +60,9 @@ function FormModal({ isEdit, task }: FormModalProps) {
    * Добавялет новую задачу при отправке формы, сбрасывает значения полей формы, закрывает модальное окно
    */
   const handleAddFormSubmit = () => {
-    if (file) {
-      dispatch(setNewTaskAction(file, data));
-    } else {
-      dispatch(setNewTaskAction(null, data));
-    }
+    const fileToUpload = file || null;
+
+    dispatch(setNewTaskAction(fileToUpload, data));
     setData(emptyTask);
     setFile(null);
     setIsModalOpen(false);
@@ -133,7 +118,7 @@ function FormModal({ isEdit, task }: FormModalProps) {
             </Form.Group>
             <Form.TextArea
               required
-              name="description"
+              name="text"
               value={data?.text}
               label="Описание задачи"
               placeholder="Что нужно сделать?"

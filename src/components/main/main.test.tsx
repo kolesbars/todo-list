@@ -17,7 +17,7 @@ const mockStore = configureMockStore<
 >(middlewares);
 
 const store = mockStore({
-  isLoading: false,
+  isTaskListLoading: false,
   taskList: [],
 });
 

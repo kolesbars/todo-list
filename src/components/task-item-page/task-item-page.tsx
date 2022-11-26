@@ -5,6 +5,7 @@ import PageHeader from '../page-header/page-header';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 import FormModal from '../form-modal/form-modal';
 import { loadCurrentTaskAction } from '../../store/api-action';
+import { checkeIsOverdue } from '../../utils/common';
 import dayjs from 'dayjs';
 import {
   Container,
@@ -18,15 +19,17 @@ import {
 } from 'semantic-ui-react';
 import {
   getCurrentTaskData,
-  getIsLoading,
+  getIsCurrentTaskLoading,
 } from '../../store/tasks-data/selectors';
 
 function TaskItemPage() {
   const data = useAppSelector(getCurrentTaskData);
-  const isLoading = useAppSelector(getIsLoading);
+  const isLoading = useAppSelector(getIsCurrentTaskLoading);
 
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
+
+  const deadlineDate = dayjs(data?.deadline);
   /**
    * Загружает данные текущей задачи при изменении идентификатора
    */
@@ -46,22 +49,22 @@ function TaskItemPage() {
             <Header as="h1" textAlign="center">
               {data?.title}
             </Header>
-            {dayjs(data?.deadline) < dayjs() && !data?.isCompleted && (
-              <Segment color="red" inverted compact didplay="inline-block">
+            {checkeIsOverdue(data?.deadline) && !data?.isCompleted && (
+              <Segment color="red" inverted compact>
                 <Header as="h3" inverted>
                   {'Задача просрочена'}
                 </Header>
               </Segment>
             )}
             {data?.isCompleted && (
-              <Segment color="green" inverted compact didplay="inline-block">
+              <Segment color="green" inverted compact>
                 <Header as="h3" floated="left" inverted>
                   {'Задача выполнена'}
                 </Header>
               </Segment>
             )}
             <Header as="p" textAlign="center">
-              {`Срок выполнения: ${dayjs(data?.deadline).format('DD.MM.YYYY')}`}
+              {`Срок выполнения: ${deadlineDate.format('DD.MM.YYYY')}`}
             </Header>
             <Container text>
               <p>{data?.text}</p>
@@ -79,7 +82,7 @@ function TaskItemPage() {
                   Скачать документ
                 </Button>
               )}
-              <FormModal isEdit={true} task={data} />
+              <FormModal isEdit={true} />
             </Segment>
           </>
         ) : (

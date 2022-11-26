@@ -3,6 +3,7 @@ import { TaskType } from '../../types/task';
 import { useHistory } from 'react-router-dom';
 import { useState } from 'react';
 import { useAppDispatch } from '../../hooks/hooks';
+import { checkeIsOverdue } from '../../utils/common';
 import dayjs from 'dayjs';
 import {
   setCompletedStatusAction,
@@ -25,7 +26,7 @@ function TaskItem({ data }: TaskItemProps) {
   const history = useHistory();
   const dispatch = useAppDispatch();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const formatedDate = dayjs(data.deadline).format('DD/MM/YYYY');
   /**
@@ -37,26 +38,24 @@ function TaskItem({ data }: TaskItemProps) {
     }
   };
   /**
-   * Открывает модальное окно для подтвержедения удаления
+   * Открывает модальное окно подтвержедения удаления
    */
   const handleDeleteClick = () => {
-    setIsOpen(true);
+    setIsDeleteModalOpen(true);
   };
   /**
    * Удаляет задачу из списка
    */
-  const handleConfirmClick = () => {
+  const handleConfirmDeleteClick = () => {
     if (data.id) {
       dispatch(deleteTaskAction(data.id));
     }
   };
   /**
-   * Закрывает модальное окно подтверждения
+   * Закрывает модальное окно удаления
    */
-  const handleCancelClick = () => {
-    console.log(isOpen);
-    setIsOpen(false);
-    console.log(isOpen);
+  const handleCancelDeleteClick = () => {
+    setIsDeleteModalOpen(false);
   };
   /**
    * Изменяет статус выполнения задачи на противоположный
@@ -66,7 +65,6 @@ function TaskItem({ data }: TaskItemProps) {
       dispatch(setCompletedStatusAction(data.id, !data.isCompleted));
     }
   };
-
   return (
     <Segment inverted={data.isCompleted}>
       <List.Item data-testid="task-item" inverted={data.isCompleted}>
@@ -78,7 +76,7 @@ function TaskItem({ data }: TaskItemProps) {
               label={'Выполнено'}
             />
           </Segment>
-          {dayjs(data.deadline) < dayjs() && !data.isCompleted && (
+          {checkeIsOverdue(data.deadline) && !data.isCompleted && (
             <Segment color="red" inverted compact>
               <List.Description as="p" floated="left" inverted>
                 {'Задача просрочена'}
@@ -100,9 +98,9 @@ function TaskItem({ data }: TaskItemProps) {
               : `${data.text}`}
           </List.Description>
           <Modal
-            onClose={() => setIsOpen(true)}
-            onOpen={() => setIsOpen(true)}
-            open={isOpen}
+            onClose={() => setIsDeleteModalOpen(true)}
+            onOpen={() => setIsDeleteModalOpen(true)}
+            open={isDeleteModalOpen}
             trigger={
               <Button onClick={handleDeleteClick} primary>
                 Удалить
@@ -115,10 +113,10 @@ function TaskItem({ data }: TaskItemProps) {
               </Modal.Description>
             </Modal.Content>
             <Modal.Actions>
-              <Button color="black" onClick={handleConfirmClick}>
+              <Button color="black" onClick={handleConfirmDeleteClick}>
                 Ok
               </Button>
-              <Button color="black" onClick={handleCancelClick}>
+              <Button color="black" onClick={handleCancelDeleteClick}>
                 Cancel
               </Button>
             </Modal.Actions>

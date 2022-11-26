@@ -17,7 +17,7 @@ function Main() {
     dispatch(loadTaskListAction());
   };
   /**
-   * Обновляет список задач и очищает данные текущей задачи при рендере компонента
+   * Обновляет список задач и очищает данные текущей задачи при маунте компонента
    */
   useEffect(() => {
     dispatch(updateCurrentTask(emptyTask));
@@ -37,7 +37,7 @@ function Main() {
         </Grid.Row>
         <Grid.Row columns={2} centered verticalAlign="middle">
           <Grid.Column width={10}>
-            <FormModal isEdit={false} task={emptyTask} />
+            <FormModal isEdit={false} />
             <Button
               onClick={handleClickUpdate}
               size="large"

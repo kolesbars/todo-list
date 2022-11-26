@@ -37,8 +37,15 @@ export const updateTask = createAction(
   })
 );
 
-export const setIsLoading = createAction(
-  ActionType.setIsLoading,
+export const setIsTaskListLoading = createAction(
+  ActionType.SetIsTaskListLoading,
+  (status: boolean) => ({
+    payload: status,
+  })
+);
+
+export const setIsCurrentTaskLoading = createAction(
+  ActionType.SetIsCurrentTaskLoadin,
   (status: boolean) => ({
     payload: status,
   })

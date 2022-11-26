@@ -1,7 +1,7 @@
 export type TaskType = {
   title: string;
   text: string;
-  date: number;
+  createdDate: number;
   id?: string;
   deadline: number;
   fileURL?: string;

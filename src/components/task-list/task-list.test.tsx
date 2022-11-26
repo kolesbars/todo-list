@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { render, screen } from '@testing-library/react';
 import { configureMockStore } from '@jedmao/redux-mock-store';
-import { firebaseApp } from '../../services/firebase'; 
+import { firebaseApp } from '../../services/firebase';
 import { State } from '../../types/state';
 import { Action } from 'redux';
 import thunk, { ThunkDispatch } from 'redux-thunk';
@@ -17,7 +17,7 @@ const mockStore = configureMockStore<
 >(middlewares);
 
 const store = mockStore({
-  isLoading: false,
+  isTaskListLoading: false,
   taskList: [],
 });
 
@@ -26,7 +26,7 @@ describe('Component: TaskList', () => {
     render(
       <Provider store={store}>
         <BrowserRouter>
-          <TaskList/>
+          <TaskList />
         </BrowserRouter>
       </Provider>
     );

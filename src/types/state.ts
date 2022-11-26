@@ -3,8 +3,9 @@ import { store } from '../store/store';
 
 export type TaskListData = {
   taskList: TaskType[];
-  isLoading: boolean;
+  isTaskListLoading: boolean;
   currentTask: TaskType,
+  isCurrentTaskLoading: boolean,
 };
 
 export type AppDispatch = typeof store.dispatch;

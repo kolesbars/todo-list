@@ -3,7 +3,8 @@ import { emptyTask } from '../../const';
 import { TaskListData } from '../../types/state';
 import {
   updateTaskList,
-  setIsLoading,
+  setIsTaskListLoading,
+  setIsCurrentTaskLoading,
   updateCurrentTask,
   addNewTask,
   changeCompletedStatus,
@@ -12,8 +13,9 @@ import {
 } from '../action';
 
 const initialState: TaskListData = {
-  isLoading: false,
+  isTaskListLoading: false,
   taskList: [],
+  isCurrentTaskLoading: false,
   currentTask: emptyTask,
 };
 
@@ -37,11 +39,14 @@ const tasksData = createReducer(initialState, (builder) => {
       ];
       state.currentTask = action.payload.data;
     })
-    .addCase(setIsLoading, (state, action) => {
-      state.isLoading = action.payload;
+    .addCase(setIsTaskListLoading, (state, action) => {
+      state.isTaskListLoading = action.payload;
     })
     .addCase(updateCurrentTask, (state, action) => {
       state.currentTask = action.payload;
+    })
+    .addCase(setIsCurrentTaskLoading, (state, action) => {
+      state.isCurrentTaskLoading = action.payload;
     })
     .addCase(changeCompletedStatus, (state, action) => {
       state.taskList.forEach((task) => {

@@ -9,22 +9,27 @@ import {
   deleteTask,
   updateCurrentTask,
   updateTask,
-  setIsLoading,
+  setIsTaskListLoading,
+  setIsCurrentTaskLoading,
 } from './action';
 /**
- * Запрашивает список задач с firestore,и добавляет их в store
+ * Запрашивает список задач с firestore
  */
 export const loadTaskListAction =
   (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
-    dispatch(setIsLoading(true));
+    dispatch(setIsTaskListLoading(true));
     const fireStore = api.firestore();
-    const resp = await fireStore.collection('tasks').get();
-    const tasks = resp.docs.map(
-      (task) => ({ ...task.data(), id: task.id } as TaskType)
-    );
-    dispatch(updateTaskList(tasks));
-    dispatch(setIsLoading(false));
+    try {
+      const resp = await fireStore.collection('tasks').get();
+      const tasks = resp.docs.map(
+        (task) => ({ ...task.data(), id: task.id } as TaskType)
+      );
+      dispatch(updateTaskList(tasks));
+      dispatch(setIsTaskListLoading(false));
+    } catch (error) {
+      console.error(error);
+    }
   };
 /**
  * Добавляет новую задачу в список задач в firestore и store
@@ -36,21 +41,20 @@ export const setNewTaskAction =
   async (dispatch, _getState, api): Promise<void> => {
     try {
       const fireStore = api.firestore();
-      const date = dayjs().valueOf();
+      const createdDate = dayjs().valueOf();
+      const newTask: TaskType = {
+        ...data,
+        createdDate: createdDate,
+      };
+
       if (file) {
         const fileURL = await addFileToStorage(api, file);
-        const newDoc = await fireStore
-          .collection('tasks')
-          .add({ ...data, fileURL: fileURL, date: date });
-        const id = newDoc.id;
-        dispatch(addNewTask({ ...data, fileURL: fileURL, id: id, date: date }));
-      } else {
-        const newDoc = await fireStore
-          .collection('tasks')
-          .add({ ...data, date: date });
-        const id = newDoc.id;
-        dispatch(addNewTask({ ...data, id: id, date: date }));
+        newTask.fileURL = fileURL;
       }
+
+      const newDoc = await fireStore.collection('tasks').add({ ...newTask });
+
+      dispatch(addNewTask({ ...newTask, id: newDoc.id }));
     } catch (error) {
       console.error(error);
     }
@@ -66,19 +70,19 @@ export const updateTaskAction =
   async (dispatch, _getState, api): Promise<void> => {
     try {
       const fireStore = api.firestore();
+      const newData: TaskType = {
+        ...data,
+      };
+
       if (file) {
         const fileURL = await addFileToStorage(api, file);
-        await fireStore
-          .collection('tasks')
-          .doc(id)
-          .update({ ...data, fileURL: fileURL });
-        const updatedDoc = await fireStore.collection('tasks').doc(id).get();
-        dispatch(updateTask(updatedDoc.id, updatedDoc.data() as TaskType));
-      } else {
-        await fireStore.collection('tasks').doc(id).update(data);
-        const updatedDoc = await fireStore.collection('tasks').doc(id).get();
-        dispatch(updateTask(updatedDoc.id, updatedDoc.data() as TaskType));
+        newData.fileURL = fileURL;
       }
+
+      await fireStore.collection('tasks').doc(id).update(newData);
+      const updatedDoc = await fireStore.collection('tasks').doc(id).get();
+
+      dispatch(updateTask(updatedDoc.id, updatedDoc.data() as TaskType));
     } catch (error) {
       console.error(error);
     }
@@ -125,12 +129,12 @@ export const loadCurrentTaskAction =
   (id: string): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
     try {
-      dispatch(setIsLoading(true));
+      dispatch(setIsCurrentTaskLoading(true));
       const fireStore = api.firestore();
       const resp = await fireStore.collection('tasks').doc(id).get();
       const task = resp.data() as TaskType;
       dispatch(updateCurrentTask(task));
-      dispatch(setIsLoading(false));
+      dispatch(setIsCurrentTaskLoading(false));
     } catch (error) {
       console.error(error);
     }

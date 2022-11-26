@@ -9,7 +9,8 @@ export enum ActionType {
   ChangeCompletedStatus = 'tasks/changeCompletedStatus',
   DeleteTask = 'tasks/deleteTask',
   UpdateTask = 'tasks/updateTask',
-  setIsLoading = 'tasks/setIsLoading',
+  SetIsTaskListLoading = 'tasks/setIsTaskListLoading',
+  SetIsCurrentTaskLoadin = 'tasks/setIsCurrentTaskLoadin',
   UpdateCurrentTask = 'tasks/updateCurrentTask'
 }
 
